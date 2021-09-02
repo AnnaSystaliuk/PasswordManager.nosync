@@ -6,6 +6,7 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,8 +26,14 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        var helper = MyDBHelper(applicationContext)
+//        var db = helper.readableDatabase
+//        var rs = db.rawQuery("SELECT * FROM PASSWORDS",null)
+//        //if db is created
+//        if (rs.moveToNext())
+//            Toast.makeText(applicationContext, rs.getString(1),Toast.LENGTH_LONG).show()
 
-        val lists = listDataManager.readLists()
+        val lists = listDataManager.readPasswords()
         todoListRecyclerView = findViewById(R.id.lists_recyclerview)
         todoListRecyclerView.layoutManager = LinearLayoutManager(this)
         todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
@@ -45,14 +52,14 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         if (requestCode == LIST_DETAIL_REQUEST_CODE) {
             data?.let {
                 val list = data.getParcelableExtra<PasswordItem>(INTENT_LIST_KEY)!!
-                listDataManager.saveList(list)
+                listDataManager.savePassword(list)
                 updateLists()
             }
         }
     }
 
     private fun updateLists() {
-        val lists = listDataManager.readLists()
+        val lists = listDataManager.readPasswords()
         todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
     }
 
@@ -74,11 +81,11 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         myDialog.setPositiveButton(positiveButtonTitle) {
                 dialog, _ ->
             val adapter = todoListRecyclerView.adapter as PasswordItemAdapter
-            val list = PasswordItem(todoTitleEditText.text.toString())
-            listDataManager.saveList(list)
-            adapter.addList(list)
+            val pwItem = PasswordItem(todoTitleEditText.text.toString())
+            listDataManager.savePassword(pwItem)
+            adapter.addList(pwItem)
             dialog.dismiss()
-            showTaskListItems(list)
+            showTaskListItems(pwItem)
         }
         myDialog.create().show()
     }
