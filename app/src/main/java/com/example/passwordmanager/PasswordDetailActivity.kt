@@ -1,19 +1,12 @@
 package com.example.passwordmanager
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.activity_password_details.*
 
 class PasswordDetailActivity: AppCompatActivity()  {
@@ -21,6 +14,10 @@ class PasswordDetailActivity: AppCompatActivity()  {
     lateinit var passwordItem: PasswordItem
 //    private val listDataManager: ListDataManager = ListDataManager(this)
     var currentIndex: Int = -1
+    private lateinit var passwordValueEditText : TextInputEditText
+    private lateinit var webLinkEditText: TextInputEditText
+    private lateinit var saveButton: Button
+    private val listDataManager: PasswordDataManager = PasswordDataManager(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,13 +42,29 @@ class PasswordDetailActivity: AppCompatActivity()  {
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(true)
 
+        passwordValueEditText = findViewById(R.id.passwordValueEditText)
+        webLinkEditText = findViewById(R.id.webLinkEditText)
+        saveButton = findViewById(R.id.saveButton) as Button
+
         passwordItem = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)!!
+        passwordValueEditText.hint = passwordItem.passwords.joinToString(",")
+
 
 //        passwordItemList = listDataManager.readLists()
 //        passwordTitle = findViewById(R.id.passwordTitle)
 //        currentIndex = 0
 //        currentIndex = intent.getIntExtra(MainActivity.INTENT_LIST_KEY, -1)
         passwordTitle.text = passwordItem.name
+
+        saveButton.setOnClickListener {
+            var pwords = ArrayList<String>()
+            pwords.add(passwordValueEditText.text.toString())
+            val updatedPwItem = PasswordItem(name = passwordItem.name,passwords = pwords)
+            listDataManager.updatePasswordValue(updatedPwItem)
+            listDataManager.readPasswords()
+
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

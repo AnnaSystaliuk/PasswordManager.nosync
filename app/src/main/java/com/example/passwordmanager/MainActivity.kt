@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,9 +24,22 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         const val LIST_DETAIL_REQUEST_CODE = 123
     }
 
+    override fun onStart() {
+        super.onStart()
+        updateLists()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val actionBar = supportActionBar
+        // methods to display the icon in the ActionBar
+//        actionBar!!.setDisplayUseLogoEnabled(true)
+//        actionBar.setDisplayShowHomeEnabled(true)
+//        actionBar.setDisplayHomeAsUpEnabled(true)
+
+
 //        var helper = MyDBHelper(applicationContext)
 //        var db = helper.readableDatabase
 
@@ -46,9 +60,6 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return true
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -66,25 +77,26 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return true
-    }
 
     private fun showCreateTodoListDialog() {
 
-        val dialogTitle = getString(R.string.name_of_list)
+        val dialogTitle = "New password information"
         val positiveButtonTitle = getString(R.string.create_list)
         val myDialog = AlertDialog.Builder(this)
-        val todoTitleEditText = EditText(this)
-        todoTitleEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+        val passwordNameEditText = EditText(this)
+
+        passwordNameEditText.hint = "Password name:"
+        passwordNameEditText.setPadding(50)
+
+        passwordNameEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
 
         myDialog.setTitle(dialogTitle)
-        myDialog.setView(todoTitleEditText)
+        myDialog.setView(passwordNameEditText)
 
         myDialog.setPositiveButton(positiveButtonTitle) {
                 dialog, _ ->
             val adapter = todoListRecyclerView.adapter as PasswordItemAdapter
-            val pwItem = PasswordItem(todoTitleEditText.text.toString())
+            val pwItem = PasswordItem(passwordNameEditText.text.toString())
             listDataManager.savePassword(pwItem)
             adapter.addList(pwItem)
             dialog.dismiss()
@@ -101,6 +113,23 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
 
     override fun listItemClicked(list: PasswordItem) {
         showTaskListItems(list)
+    }
+
+    // method to inflate the options menu when
+    // the user opens the menu for the first time
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // methods to control the operations that will
+    // happen when user clicks on the action buttons
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.search -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
+            R.id.refresh -> updateLists()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
