@@ -29,8 +29,8 @@ class PasswordItemAdapter(private val passwords: ArrayList<PasswordItem>, val cl
         }
     }
 
-    fun addList(list: PasswordItem) {
-        passwords.add(list)
+    fun addList(pwItem: PasswordItem) {
+        passwords.add(pwItem)
         notifyItemInserted(passwords.size-1)
     }
 

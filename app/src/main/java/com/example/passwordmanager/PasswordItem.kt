@@ -3,7 +3,7 @@ package com.example.passwordmanager
 import android.os.Parcel
 import android.os.Parcelable
 
-class PasswordItem(val name: String, val passwords: ArrayList<String> = ArrayList()) : Parcelable {
+class PasswordItem(var name: String = "", var passwords: ArrayList<String> = ArrayList()) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

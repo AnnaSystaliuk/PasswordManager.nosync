@@ -28,10 +28,13 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         setContentView(R.layout.activity_main)
 //        var helper = MyDBHelper(applicationContext)
 //        var db = helper.readableDatabase
+
+
+//        var rs2 = db.rawQuery("INSERT INTO PASSWORDS(NAME, PASSWORD) VALUES('SMOOTHIES FOR LYFE','hehehe')",null)
 //        var rs = db.rawQuery("SELECT * FROM PASSWORDS",null)
-//        //if db is created
+        //if db is created
 //        if (rs.moveToNext())
-//            Toast.makeText(applicationContext, rs.getString(1),Toast.LENGTH_LONG).show()
+//            Toast.makeText(applicationContext, rs.getString(3),Toast.LENGTH_LONG).show()
 
         val lists = listDataManager.readPasswords()
         todoListRecyclerView = findViewById(R.id.lists_recyclerview)
