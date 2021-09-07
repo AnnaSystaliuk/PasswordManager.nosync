@@ -105,9 +105,9 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         myDialog.create().show()
     }
 
-    private fun showTaskListItems(list: PasswordItem) {
+    private fun showTaskListItems(pw: PasswordItem) {
         val taskListItem = Intent(this, PasswordDetailActivity::class.java)
-        taskListItem.putExtra(INTENT_LIST_KEY, list)
+        taskListItem.putExtra(INTENT_LIST_KEY, pw)
         startActivity(taskListItem)
     }
 

@@ -3,11 +3,12 @@ package com.example.passwordmanager
 import android.os.Parcel
 import android.os.Parcelable
 
-class PasswordItem(var name: String = "", var passwords: ArrayList<String> = ArrayList()) : Parcelable {
+class PasswordItem(var name: String = "", var passwords: ArrayList<String> = ArrayList(), var weblink: String = "") : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
-        parcel.createStringArrayList()!!
+        parcel.createStringArrayList()!!,
+        parcel.readString()!!
     )
 
     companion object CREATOR: Parcelable.Creator<PasswordItem> {
@@ -19,6 +20,7 @@ class PasswordItem(var name: String = "", var passwords: ArrayList<String> = Arr
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(name)
         dest.writeStringList(passwords)
+        dest.writeString(weblink)
     }
 
     override fun describeContents() = 0

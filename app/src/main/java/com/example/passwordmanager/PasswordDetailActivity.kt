@@ -1,22 +1,29 @@
 package com.example.passwordmanager
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.activity_password_details.*
 
+
 class PasswordDetailActivity: AppCompatActivity()  {
 
     lateinit var passwordItem: PasswordItem
+
 //    private val listDataManager: ListDataManager = ListDataManager(this)
     var currentIndex: Int = -1
     private lateinit var passwordValueEditText : TextInputEditText
     private lateinit var webLinkEditText: TextInputEditText
     private lateinit var saveButton: Button
+    private lateinit var openLinkButton: ImageButton
     private val listDataManager: PasswordDataManager = PasswordDataManager(this)
 
 
@@ -43,26 +50,48 @@ class PasswordDetailActivity: AppCompatActivity()  {
         actionBar.setDisplayHomeAsUpEnabled(true)
 
         passwordValueEditText = findViewById(R.id.passwordValueEditText)
+        openLinkButton = findViewById(R.id.openLinkButton)
         webLinkEditText = findViewById(R.id.webLinkEditText)
         saveButton = findViewById(R.id.saveButton) as Button
 
         passwordItem = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)!!
         passwordValueEditText.hint = passwordItem.passwords.joinToString(",")
+        webLinkEditText.hint = passwordItem.weblink
 
-
-//        passwordItemList = listDataManager.readLists()
-//        passwordTitle = findViewById(R.id.passwordTitle)
-//        currentIndex = 0
-//        currentIndex = intent.getIntExtra(MainActivity.INTENT_LIST_KEY, -1)
         passwordTitle.text = passwordItem.name
 
         saveButton.setOnClickListener {
-            var pwords = ArrayList<String>()
-            pwords.add(passwordValueEditText.text.toString())
-            val updatedPwItem = PasswordItem(name = passwordItem.name,passwords = pwords)
+            var newPwords = ArrayList<String>()
+            if (passwordValueEditText.text.toString() != "") {
+                newPwords.add(passwordValueEditText.text.toString())
+            } else {
+                newPwords = passwordItem.passwords
+            }
+            var newWebLink = ""
+            if (webLinkEditText.text.toString() != "") {
+                newWebLink = webLinkEditText.text.toString()
+                passwordItem.weblink = webLinkEditText.text.toString()
+            } else {
+                newWebLink = passwordItem.weblink
+            }
+
+            val updatedPwItem = PasswordItem(name = passwordItem.name,passwords = newPwords, weblink = newWebLink)
             listDataManager.updatePasswordValue(updatedPwItem)
             listDataManager.readPasswords()
+        }
 
+        openLinkButton.setOnClickListener {
+            // url form example: https://www.android.com
+            var url = passwordItem.weblink
+            val webIntent: Intent = Uri.parse(url).let { webpage ->
+                Intent(Intent.ACTION_VIEW, webpage)
+            }
+            try {
+                it.context.startActivity(webIntent)
+            } catch (e: ActivityNotFoundException) {
+                // Define what your app should do if no activity can handle the intent.
+                Toast.makeText(this, "Page not found!", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

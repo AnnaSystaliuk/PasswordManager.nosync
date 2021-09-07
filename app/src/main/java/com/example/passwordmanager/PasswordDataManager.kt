@@ -25,6 +25,7 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
         val contentValues = ContentValues()
         contentValues.put(COL_NAME, pw.name)
         contentValues.put(COL_PASSWORD, pw.passwords.joinToString(","))
+        contentValues.put(COL_WEBLINK, pw.weblink)
         val result = database.insert(TABLENAME, null, contentValues)
         if (result == (0).toLong()) {
             Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
@@ -39,6 +40,7 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
         val contentValues = ContentValues()
         contentValues.put(COL_NAME, pw.name)
         contentValues.put(COL_PASSWORD, pw.passwords.joinToString(","))
+        contentValues.put(COL_WEBLINK, pw.weblink)
         val rows = database.update(TABLENAME, contentValues, "name = ?", arrayOf<String>(pw.name))
 
         if (rows == 0) {
@@ -62,6 +64,7 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
                 val passwords = ArrayList<String>()
                 passwords.add(result.getString(result.getColumnIndex(COL_PASSWORD)).toString())
                 user.passwords = passwords
+                user.weblink = result.getString(result.getColumnIndex(COL_WEBLINK))
                 list.add(user)
             }
             while (result.moveToNext())
