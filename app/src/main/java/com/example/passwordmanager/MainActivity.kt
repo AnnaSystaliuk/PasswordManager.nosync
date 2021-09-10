@@ -12,12 +12,11 @@ import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
-import android.R.drawable
 import android.content.Context
 
-class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickListener {
+class MainActivity : AppCompatActivity(){
 
-    private lateinit var todoListRecyclerView: RecyclerView
+//    private lateinit var todoListRecyclerView: RecyclerView
     private val listDataManager: PasswordDataManager = PasswordDataManager(this)
     var atHomePage : Boolean = true
     var passwordCheckPassed: Boolean = false
@@ -54,27 +53,43 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
 //        if (rs.moveToNext())
 //            Toast.makeText(applicationContext, rs.getString(3),Toast.LENGTH_LONG).show()
 
-        val lists = listDataManager.readPasswords()
-        todoListRecyclerView = findViewById(R.id.lists_recyclerview)
-        todoListRecyclerView.layoutManager = LinearLayoutManager(this)
-        todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
-
+//        val lists = listDataManager.readPasswords()
+//        todoListRecyclerView = findViewById(R.id.lists_recyclerview)
+//        todoListRecyclerView.layoutManager = LinearLayoutManager(this)
+//        todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
 
         fab.setOnClickListener { _ ->
             showCreateTodoListDialog()
         }
 
+
+
         val preferences = this.getSharedPreferences("shared", Context.MODE_PRIVATE)
         val currPwSettings = preferences?.getBoolean("passwordSettings", true)
         if (currPwSettings == true && passwordCheckPassed == false){
             val fram = supportFragmentManager.beginTransaction()
-            fram.replace(
-                com.example.passwordmanager.R.id.fragment_details,
-                com.example.passwordmanager.PasswordProtectionFragment()
-            )
-            fram.commit()
+            var passwordLock = com.example.passwordmanager.PasswordProtectionFragment()
+            passwordLock.finish = this::showPasswordList
+            fram.add( com.example.passwordmanager.R.id.fragment_details,
+                passwordLock)
+            fram.addToBackStack(null)
+            fram.commitAllowingStateLoss()
+            fab.hide()
+            actionBar?.hide()
+        }else {
+            showPasswordList()
         }
 
+    }
+
+    fun showPasswordList() {
+        val fram = supportFragmentManager.beginTransaction()
+        fram.add( com.example.passwordmanager.R.id.fragment_details,
+            com.example.passwordmanager.FragmentPasswordList())
+        fram.addToBackStack(null)
+        fram.commitAllowingStateLoss()
+        fab.show()
+        supportActionBar?.show()
     }
 
     fun switchPage() {
@@ -85,21 +100,28 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
                 com.example.passwordmanager.FragmentDetails()
             )
             fram.commit()
+            fab.hide()
 
         } else {
             val fram = supportFragmentManager.beginTransaction()
             fram.replace(
                 com.example.passwordmanager.R.id.fragment_details,
-                com.example.passwordmanager.FragmentPasswordListDetails()
+                com.example.passwordmanager.FragmentPasswordList()
             )
             fram.commit()
+            fab.show()
         }
 
         atHomePage = !atHomePage
 
     }
-    
 
+//    val adapter = todoListRecyclerView.adapter as PasswordItemAdapter
+    //            val pwItem = PasswordItem(passwordNameEditText.text.toString())
+//            listDataManager.savePassword(pwItem)
+//            adapter.addList(pwItem)
+//            dialog.dismiss()
+//            showTaskListItems(pwItem)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LIST_DETAIL_REQUEST_CODE) {
@@ -112,8 +134,8 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
     }
 
     private fun updateLists() {
-        val lists = listDataManager.readPasswords()
-        todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
+//        val lists = listDataManager.readPasswords()
+//        todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
     }
 
 
@@ -134,12 +156,7 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
 
         myDialog.setPositiveButton(positiveButtonTitle) {
                 dialog, _ ->
-            val adapter = todoListRecyclerView.adapter as PasswordItemAdapter
-            val pwItem = PasswordItem(passwordNameEditText.text.toString())
-            listDataManager.savePassword(pwItem)
-            adapter.addList(pwItem)
-            dialog.dismiss()
-            showTaskListItems(pwItem)
+//
         }
         myDialog.create().show()
     }
@@ -150,9 +167,9 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         startActivity(taskListItem)
     }
 
-    override fun listItemClicked(list: PasswordItem) {
-        showTaskListItems(list)
-    }
+//    override fun listItemClicked(list: PasswordItem) {
+//        showTaskListItems(list)
+//    }
 
     // method to inflate the options menu when
     // the user opens the menu for the first time

@@ -25,6 +25,8 @@ class PasswordProtectionFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var finish: () -> Unit
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -47,15 +49,8 @@ class PasswordProtectionFragment : Fragment() {
             if (protectionPasswordEditText.text.isNotBlank()){
                 if (protectionPasswordEditText.text.toString() == currentPassword) {
                     Toast.makeText(this.activity, "Access granted!", Toast.LENGTH_SHORT).show()
-                    val fram = this.activity?.supportFragmentManager?.beginTransaction()
-                    if (fram != null) {
-                        fram.replace(
-                            com.example.passwordmanager.R.id.fragment_details,
-                            com.example.passwordmanager.FragmentPasswordListDetails()
-                        )
-                        fram.commit()
-                    }
-
+                    this.activity?.supportFragmentManager?.popBackStackImmediate()
+                    finish()
                 } else {
                     Toast.makeText(this.activity, "Wrong password!", Toast.LENGTH_SHORT).show()
                 }
@@ -64,8 +59,5 @@ class PasswordProtectionFragment : Fragment() {
             }
 
         }
-
         }
-
-
 }
