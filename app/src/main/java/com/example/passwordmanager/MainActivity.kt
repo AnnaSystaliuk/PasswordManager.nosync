@@ -6,18 +6,21 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import android.R.drawable
+import android.content.Context
 
 class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickListener {
 
     private lateinit var todoListRecyclerView: RecyclerView
     private val listDataManager: PasswordDataManager = PasswordDataManager(this)
+    var atHomePage : Boolean = true
+    var passwordCheckPassed: Boolean = false
 
     companion object {
         const val INTENT_LIST_KEY = "list"
@@ -32,7 +35,8 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        atHomePage = true
+        passwordCheckPassed=false
         val actionBar = supportActionBar
         // methods to display the icon in the ActionBar
 //        actionBar!!.setDisplayUseLogoEnabled(true)
@@ -55,11 +59,46 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
         todoListRecyclerView.layoutManager = LinearLayoutManager(this)
         todoListRecyclerView.adapter = PasswordItemAdapter(lists, this)
 
+
         fab.setOnClickListener { _ ->
             showCreateTodoListDialog()
         }
+
+        val preferences = this.getSharedPreferences("shared", Context.MODE_PRIVATE)
+        val currPwSettings = preferences?.getBoolean("passwordSettings", true)
+        if (currPwSettings == true && passwordCheckPassed == false){
+            val fram = supportFragmentManager.beginTransaction()
+            fram.replace(
+                com.example.passwordmanager.R.id.fragment_details,
+                com.example.passwordmanager.PasswordProtectionFragment()
+            )
+            fram.commit()
+        }
+
     }
 
+    fun switchPage() {
+        if (atHomePage == true) {
+            val fram = supportFragmentManager.beginTransaction()
+            fram.replace(
+                com.example.passwordmanager.R.id.fragment_details,
+                com.example.passwordmanager.FragmentDetails()
+            )
+            fram.commit()
+
+        } else {
+            val fram = supportFragmentManager.beginTransaction()
+            fram.replace(
+                com.example.passwordmanager.R.id.fragment_details,
+                com.example.passwordmanager.FragmentPasswordListDetails()
+            )
+            fram.commit()
+        }
+
+        atHomePage = !atHomePage
+
+    }
+    
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -126,7 +165,15 @@ class MainActivity : AppCompatActivity(), PasswordItemAdapter.PasswordItemClickL
     // happen when user clicks on the action buttons
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
+//            R.id.passwordSettings -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
+            R.id.passwordSettings -> {
+                switchPage()
+                if (atHomePage == true){
+                    item.setIcon(android.R.drawable.ic_secure)
+                } else {
+                    item.setIcon(android.R.drawable.ic_menu_revert)
+                }
+            }
             R.id.refresh -> updateLists()
         }
         return super.onOptionsItemSelected(item)

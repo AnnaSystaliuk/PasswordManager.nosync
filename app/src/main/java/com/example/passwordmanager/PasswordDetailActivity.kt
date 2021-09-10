@@ -112,7 +112,7 @@ class PasswordDetailActivity: AppCompatActivity()  {
     // happen when user clicks on the action buttons
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
+            R.id.passwordSettings -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
             R.id.refresh -> Toast.makeText(this, "Refresh Clicked", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)

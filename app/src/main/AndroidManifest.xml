@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PasswordManager">
-
+        <activity android:name=".PasswordProtectionActivity" />
         <activity android:name=".PasswordDetailActivity" />
         <activity
             android:name=".MainActivity"
@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
     </application>
-
 
 
 </manifest>
