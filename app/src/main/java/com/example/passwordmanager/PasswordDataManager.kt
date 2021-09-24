@@ -28,14 +28,15 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
         contentValues.put(COL_WEBLINK, pw.weblink)
         val result = database.insert(TABLENAME, null, contentValues)
         if (result == (0).toLong()) {
+            passwordList.add(pw)
             Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
         }
+
     }
 
     fun updatePasswordValue(pw: PasswordItem) {
-
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_NAME, pw.name)
@@ -52,7 +53,6 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
 
 
     fun readPasswords(): ArrayList<PasswordItem> {
-
         val list: ArrayList<PasswordItem> = ArrayList()
         val db = this.readableDatabase
         val query = "Select * from $TABLENAME"
@@ -70,9 +70,6 @@ class PasswordDataManager(private val context: Context) : SQLiteOpenHelper(conte
             while (result.moveToNext())
         }
         return list
-
-//        return passwordList
-
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
